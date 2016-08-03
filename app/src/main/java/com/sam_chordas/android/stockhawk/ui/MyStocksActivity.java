@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
@@ -57,6 +58,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     boolean isConnected;
     private String symbol;
     private String mInputSymbol;
+    private View mView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +71,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
         setContentView(R.layout.activity_my_stocks);
+        mView = findViewById(R.id.parentView);
 
         //Initialize Stetho
         Stetho.initializeWithDefaults(this);
@@ -83,74 +86,76 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
             if (isConnected) {
                 startService(mServiceIntent);
             } else {
+                sendBroadcast(mServiceIntent);
                 networkToast();
             }
-        }
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        assert recyclerView != null;
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
 
-        mCursorAdapter = new QuoteCursorAdapter(this, null);
-        recyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this,
-                new RecyclerViewItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View v, int position) {
-                        //TODO:
-                        // do something on item click
-                        mCursor.moveToPosition(position);
-                        symbol = mCursor.getString(mCursor.getColumnIndex(QuoteColumns.SYMBOL));
-                        Intent intent = new Intent(mContext, MyStocksDetailActivity.class);
-                        intent.putExtra("symbol", symbol);
-                        startActivity(intent);
+            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+            assert recyclerView != null;
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
+
+            mCursorAdapter = new QuoteCursorAdapter(this, null);
+            recyclerView.addOnItemTouchListener(new RecyclerViewItemClickListener(this,
+                    new RecyclerViewItemClickListener.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(View v, int position) {
+                            //TODO:
+                            // do something on item click
+                            mCursor.moveToPosition(position);
+                            symbol = mCursor.getString(mCursor.getColumnIndex(QuoteColumns.SYMBOL));
+                            Intent intent = new Intent(mContext, MyStocksDetailActivity.class);
+                            intent.putExtra("symbol", symbol);
+                            startActivity(intent);
+                        }
+                    }));
+            recyclerView.setAdapter(mCursorAdapter);
+
+
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            assert fab != null;
+            fab.attachToRecyclerView(recyclerView);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (Utils.isConnected(mContext)) {
+                        DialogFragment fragment = new MyDialogFragment();
+                        fragment.show(getFragmentManager(), "Dialog");
+                    } else {
+                        networkToast();
                     }
-                }));
-        recyclerView.setAdapter(mCursorAdapter);
 
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        assert fab != null;
-        fab.attachToRecyclerView(recyclerView);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Utils.isConnected(mContext)) {
-                    DialogFragment fragment = new MyDialogFragment();
-                    fragment.show(getFragmentManager(), "Dialog");
-                } else {
-                    networkToast();
                 }
+            });
 
+            ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mCursorAdapter);
+            mItemTouchHelper = new ItemTouchHelper(callback);
+            mItemTouchHelper.attachToRecyclerView(recyclerView);
+
+            mTitle = getTitle();
+            Log.v(LOG_TAG, String.valueOf(mTitle));
+            if (isConnected) {
+                long period = 3600L;
+                long flex = 10L;
+                String periodicTag = "periodic";
+
+                // create a periodic task to pull stocks once every hour after the app has been opened. This
+                // is so Widget data stays up to date.
+                PeriodicTask periodicTask = new PeriodicTask.Builder()
+                        .setService(StockTaskService.class)
+                        .setPeriod(period)
+                        .setFlex(flex)
+                        .setTag(periodicTag)
+                        .setPersisted(true)
+                        .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED) //Set the network state that the task requires to run.
+                        .setRequiresCharging(false)                       //Whether task requires device to be connected to power in order to run.
+                        .build();
+                // Schedule task with tag "periodic." This ensure that only the stocks present in the DB
+                // are updated.
+                GcmNetworkManager.getInstance(this).schedule(periodicTask);
             }
-        });
-
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mCursorAdapter);
-        mItemTouchHelper = new ItemTouchHelper(callback);
-        mItemTouchHelper.attachToRecyclerView(recyclerView);
-
-        mTitle = getTitle();
-        Log.v(LOG_TAG, String.valueOf(mTitle));
-        if (isConnected) {
-            long period = 3600L;
-            long flex = 10L;
-            String periodicTag = "periodic";
-
-            // create a periodic task to pull stocks once every hour after the app has been opened. This
-            // is so Widget data stays up to date.
-            PeriodicTask periodicTask = new PeriodicTask.Builder()
-                    .setService(StockTaskService.class)
-                    .setPeriod(period)
-                    .setFlex(flex)
-                    .setTag(periodicTag)
-                    .setRequiredNetwork(Task.NETWORK_STATE_CONNECTED) //Set the network state that the task requires to run.
-                    .setRequiresCharging(false)                       //Whether task requires device to be connected to power in order to run.
-                    .build();
-            // Schedule task with tag "periodic." This ensure that only the stocks present in the DB
-            // are updated.
-            GcmNetworkManager.getInstance(this).schedule(periodicTask);
         }
     }
-
 
     @Override
     public void onResume() {
@@ -219,11 +224,28 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mCursorAdapter.swapCursor(data);
         mCursor = data;
+        updateEmptyView();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mCursorAdapter.swapCursor(null);
     }
+
+    private void updateEmptyView()
+    {
+        TextView emptyView = (TextView) findViewById(R.id.emptyView);
+       if( mCursorAdapter.getItemCount()== 0)
+       {
+           if (emptyView!=null)
+           {
+               int id= R.string.no_stock_information_available;
+
+               emptyView.setText(getString(id));
+           }
+       }
+    }
+
+
 
 }
