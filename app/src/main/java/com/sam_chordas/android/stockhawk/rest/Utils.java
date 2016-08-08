@@ -2,12 +2,16 @@ package com.sam_chordas.android.stockhawk.rest;
 
 import android.content.ContentProviderOperation;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
+import com.sam_chordas.android.stockhawk.ui.MyStocksActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,9 +30,9 @@ public class Utils {
     private static String LOG_TAG = Utils.class.getSimpleName();
 
     public static boolean showPercent = true;
-    public static boolean sInvalidSymbol=false;
+    public static boolean sInvalidSymbol = false;
 
-    public static ArrayList quoteJsonToContentVals(String JSON) throws JSONException {
+    public static ArrayList quoteJsonToContentVals(String JSON, Context context) throws JSONException {
         ArrayList<ContentProviderOperation> batchOperations = new ArrayList<>();
         JSONObject jsonObject = null;
         JSONArray resultsArray = null;
@@ -43,7 +47,7 @@ public class Utils {
                         jsonObject = jsonObject.getJSONObject("results")
                                 .getJSONObject("quote");
                         if (jsonObject.getString("Bid").equals("null")) {
-                            Log.v(LOG_TAG,"This part executed");
+                            Log.v(LOG_TAG, "This part executed");
                             return new ArrayList();
                         }
                         batchOperations.add(buildBatchOperation(jsonObject));
@@ -54,7 +58,7 @@ public class Utils {
                             for (int i = 0; i < resultsArray.length(); i++) {
                                 jsonObject = resultsArray.getJSONObject(i);
                                 if (jsonObject.getString("Bid").equals("null")) {
-                                    Log.v(LOG_TAG,"This part executed");
+                                    Log.v(LOG_TAG, "This part executed");
                                     return new ArrayList();
                                 }
                                 batchOperations.add(buildBatchOperation(jsonObject));
@@ -62,8 +66,10 @@ public class Utils {
                         }
                     }
                 }
+                setStatus(context, MyStocksActivity.STATUS_OK);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, "String to JSON failed: " + e);
+                setStatus(context, MyStocksActivity.STATUS_SERVER_INVALID);
             }
         return batchOperations;
     }
@@ -97,6 +103,7 @@ public class Utils {
             String change = jsonObject.getString("Change");
             Log.v(LOG_TAG, "Change: " + change);
             builder.withValue(QuoteColumns.SYMBOL, jsonObject.getString("symbol"));
+            builder.withValue(QuoteColumns.COMPANY_NAME, jsonObject.getString("Name"));
             builder.withValue(QuoteColumns.BIDPRICE, truncateBidPrice(jsonObject.getString("Bid")));
             builder.withValue(QuoteColumns.PERCENT_CHANGE, truncateChange(
                     jsonObject.getString("ChangeinPercent"), true));
@@ -109,6 +116,7 @@ public class Utils {
             } else {
                 builder.withValue(QuoteColumns.ISUP, 1);
             }
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -141,9 +149,20 @@ public class Utils {
                 activeNetwork.isConnectedOrConnecting();
     }
 
-    public static boolean containWhiteSpace(String string)
-    {
-        return string.contains(" ");
+    public static void setStatus(Context context, @MyStocksActivity.stockStatus int status) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(context.getString(R.string.status_key), status);
+        editor.apply();
     }
+
+    public static
+    @MyStocksActivity.stockStatus
+    int getStatus(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        @MyStocksActivity.stockStatus int status = preferences.getInt(context.getString(R.string.status_key), MyStocksActivity.STATUS_UNKNOWN);
+        return status;
+    }
+
 
 }

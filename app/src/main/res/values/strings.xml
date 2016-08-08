@@ -16,7 +16,12 @@
     <string name="negative_text">CANCEL</string>
     <string name="stock">stock</string>
 
-    <string name="no_stock_information_available">No Stock Information Available.</string>
+    <string name="no_stock_information_available">No Stock Information Available.Trying adding stocks by clicking the add symbol.</string>
+    <string name="no_internet_connection">No Stock Information Available.The network is not available to fetch stock data.</string>
     <string name="network_toast">Uh-oh! This app requires an internet connection</string>
+    <string name="status_key">status</string>
+    <string name="server_down">No Stock Information Available.The server is not responding. </string>
+    <string name="server_invalid">No Stock Information Available.The server is unable to fetch stock data.</string>
+    <string name="enable">Enable</string>
 
 </resources>

@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -37,6 +38,8 @@ public class MyStocksDetailActivity extends AppCompatActivity {
     private final String BASE_URL = "https://query.yahooapis.com/";
 
     private LineChart mLineChart;
+    private TextView mCompanyNameTextView;
+    private String mCompanyName;
 
     private LineData data;
 
@@ -52,6 +55,7 @@ public class MyStocksDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_line_graph);
         mStockArrayList = new ArrayList<>();
         mLineChart = (LineChart) findViewById(R.id.linechart);
+        mCompanyNameTextView= (TextView) findViewById(R.id.companyName);
         if (mLineChart != null) {
             if (Utils.isConnected(this))
                 mLineChart.setNoDataText("Loading...Please Wait");
@@ -60,6 +64,7 @@ public class MyStocksDetailActivity extends AppCompatActivity {
         }
 
         final String stockSymbol = getIntent().getStringExtra("symbol");
+         mCompanyName= getIntent().getStringExtra("name");
         String endDate = Utils.getEndDate();
         final String startDate = Utils.getStartDate();
         Log.v(LOG_TAG, startDate + " " + endDate);
@@ -93,6 +98,7 @@ public class MyStocksDetailActivity extends AppCompatActivity {
                         Log.v(LOG_TAG, response.raw().toString());
                     }
                     setData(mStockArrayList, stockSymbol);
+                    mCompanyNameTextView.setText(mCompanyName);
                 }
 
                 @Override
@@ -108,6 +114,8 @@ public class MyStocksDetailActivity extends AppCompatActivity {
 
         } else {
             mStockArrayList = savedInstanceState.getParcelableArrayList("Stocks");
+            mCompanyName= savedInstanceState.getString("Company Name");
+            mCompanyNameTextView.setText(mCompanyName);
             setData(mStockArrayList, stockSymbol);
         }
 
@@ -178,6 +186,7 @@ public class MyStocksDetailActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList("Stocks", mStockArrayList);
+        outState.putString("Company Name",mCompanyName);
         super.onSaveInstanceState(outState);
     }
 

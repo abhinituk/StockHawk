@@ -31,9 +31,10 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
     private static Typeface robotoLight;
     private boolean isPercent;
 
-    public QuoteCursorAdapter(Context context, Cursor cursor) {
-        super(context, cursor);
+    public QuoteCursorAdapter(Context context, Cursor cursor,View emptyView) {
+        super(context, cursor,emptyView);
         mContext = context;
+
     }
 
     @Override
@@ -89,6 +90,7 @@ public class QuoteCursorAdapter extends CursorRecyclerViewAdapter<QuoteCursorAda
     public int getItemCount() {
         return super.getItemCount();
     }
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder
             implements ItemTouchHelperViewHolder, View.OnClickListener {

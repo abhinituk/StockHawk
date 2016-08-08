@@ -14,6 +14,7 @@ import com.google.android.gms.gcm.TaskParams;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
 import com.sam_chordas.android.stockhawk.rest.Utils;
+import com.sam_chordas.android.stockhawk.ui.MyStocksActivity;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -118,6 +119,10 @@ public class StockTaskService extends GcmTaskService {
         Log.v(LOG_TAG, "Url String: "+urlString);
         try {
             getResponse = fetchData(urlString);
+            if (getResponse== null)
+            {
+                Utils.setStatus(mContext, MyStocksActivity.STATUS_SERVER_DOWN);
+            }
             result = GcmNetworkManager.RESULT_SUCCESS;
             try {
                 ContentValues contentValues = new ContentValues();
@@ -128,13 +133,13 @@ public class StockTaskService extends GcmTaskService {
                             null, null);
                 }
                 Log.v(LOG_TAG, String.valueOf(Utils.sInvalidSymbol));
-                if (Utils.quoteJsonToContentVals(getResponse).size() == 0)
+                if (Utils.quoteJsonToContentVals(getResponse,mContext).size() == 0)
                     Utils.sInvalidSymbol = true;
 
 
                 else {
                     mContext.getContentResolver().applyBatch(QuoteProvider.AUTHORITY,
-                            Utils.quoteJsonToContentVals(getResponse));
+                            Utils.quoteJsonToContentVals(getResponse,mContext));
                     Utils.sInvalidSymbol = false;
 
                 }
@@ -144,9 +149,11 @@ public class StockTaskService extends GcmTaskService {
                 Log.e(LOG_TAG, "Error applying batch insert", e);
             } catch (JSONException e) {
                 e.printStackTrace();
+                Utils.setStatus(mContext,MyStocksActivity.STATUS_SERVER_INVALID);
             }
         } catch (IOException e) {
             e.printStackTrace();
+            Utils.setStatus(mContext,MyStocksActivity.STATUS_SERVER_DOWN);
         }
         return result;
     }

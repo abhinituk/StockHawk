@@ -52,7 +52,7 @@ public class MyDialogFragment extends DialogFragment {
                         }
                     }
                 })
-                .inputRangeRes(1, 20, R.color.material_red_700)
+                .inputRange(1, 20)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
