@@ -51,5 +51,21 @@ public class QuoteProvider {
     public static Uri withSymbol(String symbol){
       return buildUri(Path.QUOTES, symbol);
     }
+
+//    //This is for accessing only current stock
+//    @InexactContentUri(
+//            name = "QUOTE_ID",
+//            path = Path.QUOTES+"/*/#",
+//            type = "vnd.android.cursor.item/quote",
+//            whereColumn = QuoteColumns.SYMBOL
+//    )
+//    public static Uri withSymbolWithCurrent(String symbol,int current)
+//    {
+//      return buildUri(Path.QUOTES,symbol, String.valueOf(current));
+//    }
+
+
+
+
   }
 }
