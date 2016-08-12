@@ -1,8 +1,10 @@
 package com.sam_chordas.android.stockhawk.widget;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Binder;
+import android.os.Build;
 import android.util.Log;
 import android.widget.AdapterView;
 import android.widget.RemoteViews;
@@ -99,7 +101,6 @@ public class StockWidgetRemoteViewsService extends RemoteViewsService {
                 String bidPrice = data.getString(INDEX_BID_PRICE);
                 views.setTextViewText(R.id.widget_bid_price, bidPrice);
 
-                //int isUp = data.getInt(INDEX_IS_UP);
                 String change = data.getString(INDEX_CHANGE);
                 String percentChange = data.getString(INDEX_PERCENT_CHANGE);
                 if (Utils.showPercent) {
@@ -107,6 +108,7 @@ public class StockWidgetRemoteViewsService extends RemoteViewsService {
                 } else {
                     views.setTextViewText(R.id.widget_change, change);
                 }
+                setRemoteContentDescription(views,symbol);
 
                 Log.v(TAG,symbol+change+bidPrice);
                // Uri uri = "content://com.sam_chordas.android.stockhawk.data.QuoteProvider/quotes/HP";
@@ -126,6 +128,11 @@ public class StockWidgetRemoteViewsService extends RemoteViewsService {
             @Override
             public int getViewTypeCount() {
                 return 1;
+            }
+
+            @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+            private void setRemoteContentDescription(RemoteViews views, String description) {
+                views.setContentDescription(R.id.widget_list_item, description);
             }
 
             @Override

@@ -206,6 +206,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
 
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
@@ -286,6 +287,12 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
                     default:
                         if (!Utils.isConnected(mContext))
                             id = R.string.no_internet_connection;
+                    case STATUS_OK_NO_DATA:
+                        break;
+                    case STATUS_OK:
+                        break;
+                    case STATUS_UNKNOWN:
+                        break;
                 }
 
                 emptyView.setText(getString(id));

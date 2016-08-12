@@ -8,7 +8,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="@dimen/widget_appbar_height"
         android:id="@+id/widget"
         android:background="@color/material_blue_500">
 
@@ -20,7 +20,7 @@
             android:layout_gravity="center_horizontal"
             android:textStyle="italic"
             android:fontFamily="sans-serif-condensed"
-            android:textSize="28sp"
+            android:textSize="@dimen/textsize"
             android:text="@string/widget" />
     </FrameLayout>
 

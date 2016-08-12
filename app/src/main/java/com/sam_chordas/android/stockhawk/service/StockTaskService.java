@@ -162,11 +162,10 @@ public class StockTaskService extends GcmTaskService {
     }
 
     private void updateWidgets() {
-        Context context = getBaseContext();
         // Setting the package ensures that only components in our app will receive the broadcast
         Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
-                .setPackage(context.getPackageName());
-        context.sendBroadcast(dataUpdatedIntent);
+                .setPackage(mContext.getPackageName());
+        mContext.sendBroadcast(dataUpdatedIntent);
     }
 
     //Using OkHttp to download the contents of URL
