@@ -92,7 +92,7 @@ public class StockWidgetRemoteViewsService extends RemoteViewsService {
                         data == null || !data.moveToPosition(position)) {
                     return null;
                 }
-                RemoteViews views = new RemoteViews(getPackageName(), R.id.widget_list_item);
+                RemoteViews views = new RemoteViews(getPackageName(), R.layout.stock_widget_list_item);
 
                 String symbol = data.getString(INDEX_SYMBOL);
                 views.setTextViewText(R.id.widget_stock_symbol, symbol);
@@ -113,7 +113,7 @@ public class StockWidgetRemoteViewsService extends RemoteViewsService {
 
                 final Intent fillIntent = new Intent();
 //                Uri uri= QuoteProvider.Quotes.CONTENT_URI
-                fillIntent.setData(QuoteProvider.Quotes.CONTENT_URI);
+                fillIntent.putExtra("symbol",symbol);
                 views.setOnClickFillInIntent(R.id.widget_list_item,fillIntent);
                 return views;
             }

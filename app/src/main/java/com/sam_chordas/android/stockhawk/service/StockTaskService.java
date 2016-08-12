@@ -119,11 +119,10 @@ public class StockTaskService extends GcmTaskService {
         int result = GcmNetworkManager.RESULT_FAILURE;
 
         urlString = urlStringBuilder.toString();
-        Log.v(LOG_TAG, "Url String: "+urlString);
+        Log.v(LOG_TAG, "Url String: " + urlString);
         try {
             getResponse = fetchData(urlString);
-            if (getResponse== null)
-            {
+            if (getResponse == null) {
                 Utils.setStatus(mContext, MyStocksActivity.STATUS_SERVER_DOWN);
             }
             result = GcmNetworkManager.RESULT_SUCCESS;
@@ -136,16 +135,15 @@ public class StockTaskService extends GcmTaskService {
                             null, null);
                 }
                 Log.v(LOG_TAG, String.valueOf(Utils.sInvalidSymbol));
-                if (Utils.quoteJsonToContentVals(getResponse,mContext).size() == 0)
+                if (Utils.quoteJsonToContentVals(getResponse, mContext).size() == 0)
                     Utils.sInvalidSymbol = true;
 
 
                 else {
                     mContext.getContentResolver().applyBatch(QuoteProvider.AUTHORITY,
-                            Utils.quoteJsonToContentVals(getResponse,mContext));
+                            Utils.quoteJsonToContentVals(getResponse, mContext));
                     Utils.sInvalidSymbol = false;
-                    //updateWidgets();
-
+                    updateWidgets();
                 }
                 Log.v(LOG_TAG, String.valueOf(Utils.sInvalidSymbol));
 
@@ -154,11 +152,11 @@ public class StockTaskService extends GcmTaskService {
                 Log.e(LOG_TAG, "Error applying batch insert", e);
             } catch (JSONException e) {
                 e.printStackTrace();
-                Utils.setStatus(mContext,MyStocksActivity.STATUS_SERVER_INVALID);
+                Utils.setStatus(mContext, MyStocksActivity.STATUS_SERVER_INVALID);
             }
         } catch (IOException e) {
             e.printStackTrace();
-            Utils.setStatus(mContext,MyStocksActivity.STATUS_SERVER_DOWN);
+            Utils.setStatus(mContext, MyStocksActivity.STATUS_SERVER_DOWN);
         }
         return result;
     }
