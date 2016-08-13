@@ -20,6 +20,7 @@ import com.sam_chordas.android.stockhawk.rest.Utils;
  */
 public class StockWidgetRemoteViewsService extends RemoteViewsService {
     private static final String TAG = "Values";
+    private static final String SYMBOL = "symbol";
 
     private final String[] STOCK_COLUMNS = {
             QuoteColumns._ID,
@@ -115,7 +116,7 @@ public class StockWidgetRemoteViewsService extends RemoteViewsService {
 
                 final Intent fillIntent = new Intent();
 //                Uri uri= QuoteProvider.Quotes.CONTENT_URI
-                fillIntent.putExtra("symbol",symbol);
+                fillIntent.putExtra(SYMBOL,symbol);
                 views.setOnClickFillInIntent(R.id.widget_list_item,fillIntent);
                 return views;
             }

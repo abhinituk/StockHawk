@@ -47,6 +47,8 @@ import java.lang.annotation.RetentionPolicy;
 
 public class MyStocksActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
 
+    private static final String DIALOG = "Dialog";
+    private static final String PERIODIC = "periodic";
     private final String LOG_TAG = getClass().getSimpleName();
 
 
@@ -136,9 +138,9 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
             public void onClick(View v) {
                 if (Utils.isConnected(mContext)) {
                     DialogFragment fragment = new MyDialogFragment();
-                    fragment.show(getFragmentManager(), "Dialog");
+                    fragment.show(getFragmentManager(), DIALOG);
                 } else {
-                    Snackbar.make(view, "No Internet Connection", Snackbar.LENGTH_INDEFINITE).
+                    Snackbar.make(view, R.string.no_internet_connection_available, Snackbar.LENGTH_INDEFINITE).
                             setAction(R.string.enable, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -161,7 +163,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
         if (isConnected) {
             long period = 3600L;
             long flex = 10L;
-            String periodicTag = "periodic";
+            String periodicTag = PERIODIC;
 
             // create a periodic task to pull stocks once every hour after the app has been opened. This
             // is so Widget data stays up to date.
@@ -302,7 +304,7 @@ public class MyStocksActivity extends AppCompatActivity implements LoaderManager
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(R.string.status_key))
+        if (key.equals(getString(R.string.status_key)))
             updateEmptyView();
 
     }

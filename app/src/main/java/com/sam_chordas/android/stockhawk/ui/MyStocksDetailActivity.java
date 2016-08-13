@@ -58,16 +58,15 @@ public class MyStocksDetailActivity extends AppCompatActivity {
         mCompanyNameTextView= (TextView) findViewById(R.id.companyName);
         if (mLineChart != null) {
             if (Utils.isConnected(this))
-                mLineChart.setNoDataText("Loading...Please Wait");
+                mLineChart.setNoDataText(getString(R.string.loading));
             else
-                mLineChart.setNoDataText("No Internet Connection Available");
+                mLineChart.setNoDataText(getString(R.string.no_internet_connection_available));
         }
 
         final String stockSymbol = getIntent().getStringExtra("symbol");
          mCompanyName= getIntent().getStringExtra("name");
         String endDate = Utils.getEndDate();
         final String startDate = Utils.getStartDate();
-        Log.v(LOG_TAG, startDate + " " + endDate);
         String query = "select * from yahoo.finance.historicaldata where symbol='" +
                 stockSymbol.toUpperCase() +
                 "' and startDate ='" + startDate + "'and endDate ='" + endDate + "'";
@@ -104,10 +103,10 @@ public class MyStocksDetailActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<List<StockItem>> call, Throwable t) {
                     if (!Utils.isConnected(getApplicationContext()))
-                        mLineChart.setNoDataText("No Internet Connection");
+                        mLineChart.setNoDataText(getString(R.string.no_internet_connection_available));
 
                     else
-                        mLineChart.setNoDataText("Error Occurred");
+                        mLineChart.setNoDataText(getString(R.string.error));
 
                 }
             });
@@ -127,7 +126,7 @@ public class MyStocksDetailActivity extends AppCompatActivity {
         ArrayList<String> date = new ArrayList<>();
 
         // no description text
-        mLineChart.setDescription("Stock's Value Over Time");
+        mLineChart.setDescription(getString(R.string.value_over_time));
 
         mLineChart.setScaleEnabled(true);
         mLineChart.setDragEnabled(true);

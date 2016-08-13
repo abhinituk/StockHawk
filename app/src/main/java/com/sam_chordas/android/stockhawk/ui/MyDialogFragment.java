@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -22,6 +21,9 @@ import com.sam_chordas.android.stockhawk.service.StockIntentService;
  * Created by Abhishek on 01-08-2016.
  */
 public class MyDialogFragment extends DialogFragment {
+    private static final String TAG = "tag";
+    private static final String ADD = "add";
+    private static final String SYMBOL = "symbol";
     private final String LOG_TAG = getClass().getSimpleName();
     private String mInputSymbol;
     private Intent mServiceIntent;
@@ -41,8 +43,7 @@ public class MyDialogFragment extends DialogFragment {
                     public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
 
                         if (input.toString().contains(" ")) {
-                            Log.v(LOG_TAG, "This part executed");
-                            dialog.setContent("WhiteSpace not allowed");
+                            dialog.setContent(R.string.whitespace);
                             dialog.getActionButton(DialogAction.POSITIVE).setEnabled(false);
                         } else {
                             dialog.setContent(R.string.content_test);
@@ -61,7 +62,7 @@ public class MyDialogFragment extends DialogFragment {
                                 new String[]{mInputSymbol}, null);
                         if ((c != null ? c.getCount() : 0) != 0) {
                             Toast toast =
-                                    Toast.makeText(getActivity(), "This stock is already saved!",
+                                    Toast.makeText(getActivity(), R.string.stock_already_saved,
                                             Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER, Gravity.CENTER, 0);
                             toast.show();
@@ -69,8 +70,8 @@ public class MyDialogFragment extends DialogFragment {
                         } else {
                             // Add the stock to DB
                             mServiceIntent = new Intent(getActivity(), StockIntentService.class);
-                            mServiceIntent.putExtra("tag", "add");
-                            mServiceIntent.putExtra("symbol", mInputSymbol);
+                            mServiceIntent.putExtra(TAG, ADD);
+                            mServiceIntent.putExtra(SYMBOL, mInputSymbol);
                             getActivity().startService(mServiceIntent);
                         }
                         if (c != null) {

@@ -20,6 +20,10 @@ http://stackoverflow.com/questions/23070298/get-nested-json-object-with-gson-usi
  */
 public class Deserializable implements JsonDeserializer<List<StockItem>> {
 
+    private static final String QUERY = "query";
+    private static final String RESULTS = "results";
+    private static final String QUOTE = "quote";
+
     @Override
     public List<StockItem> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 
@@ -27,9 +31,9 @@ public class Deserializable implements JsonDeserializer<List<StockItem>> {
         return new Gson().fromJson(
 
                 json
-                        .getAsJsonObject().get("query")
-                        .getAsJsonObject().get("results")
-                        .getAsJsonObject().get("quote")
+                        .getAsJsonObject().get(QUERY)
+                        .getAsJsonObject().get(RESULTS)
+                        .getAsJsonObject().get(QUOTE)
                         .getAsJsonArray(), typeOfT);
     }
 }

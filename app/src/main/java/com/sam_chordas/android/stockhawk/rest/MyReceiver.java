@@ -10,10 +10,13 @@ import com.sam_chordas.android.stockhawk.service.StockIntentService;
  * Created by Abhishek on 03-08-2016.
  */
 public class MyReceiver extends BroadcastReceiver {
+    private static final String TAG = "tag";
+    private static final String INIT = "init";
+
     @Override
     public void onReceive(Context context, Intent intent) {
         intent= new Intent(context, StockIntentService.class);
-        intent.putExtra("tag","init");
+        intent.putExtra(TAG, INIT);
         context.startService(intent);
     }
 }

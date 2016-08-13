@@ -7,7 +7,9 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/padding_bottom"
+        android:clipToPadding="false"/>
 
     <TextView
         android:id="@+id/emptyView"
@@ -30,5 +32,6 @@
         fab:fab_shadow="true"
         fab:fab_type="normal"
         fab:layout_anchor="recycler_view"
+        android:contentDescription="@string/add_stock_symbol"
         fab:layout_anchorGravity="bottom | end" />
 </FrameLayout>

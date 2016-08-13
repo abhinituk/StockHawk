@@ -35,6 +35,16 @@
 
     <!--String used for widget-->
     <string name="widget" translatable="false">Stockhawk </string>
+    <string name="add_stock_symbol">Add Stock Symbol</string>
+    <string name="column_id">_id</string>
+    <string name="whitespace">WhiteSpace not allowed</string>
+    <string name="stock_already_saved">This stock is already saved!</string>
+    <string name="no_internet_connection_available">No Internet Connection</string>
+    <string name="loading">Loading...Please Wait</string>
+    <string name="error">Error Occurred</string>
+    <string name="value_over_time">Stock\'s Value Over Time</string>
+    <string name="invalid_stock_symbol">Invalid Stock Symbol</string>
+    <string name="error_batch_insert">Error applying batch insert</string>
 
 
 </resources>

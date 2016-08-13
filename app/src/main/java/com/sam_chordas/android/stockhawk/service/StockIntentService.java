@@ -4,9 +4,9 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 
 import com.google.android.gms.gcm.TaskParams;
+import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.rest.DisplayToast;
 import com.sam_chordas.android.stockhawk.rest.Utils;
 
@@ -27,7 +27,6 @@ public class StockIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(final Intent intent) {
-        Log.d(StockIntentService.class.getSimpleName(), "Stock Intent Service");
         StockTaskService stockTaskService = new StockTaskService(this);
         Bundle args = new Bundle();
         if (intent.getStringExtra("tag").equals("add")) {
@@ -38,7 +37,7 @@ public class StockIntentService extends IntentService {
         stockTaskService.onRunTask(new TaskParams(intent.getStringExtra("tag"), args));
 
         if (Utils.sInvalidSymbol) {
-            handler.post(new DisplayToast(this, "Invalid Stock Symbol"));
+            handler.post(new DisplayToast(this, getString(R.string.invalid_stock_symbol)));
         }
     }
 }

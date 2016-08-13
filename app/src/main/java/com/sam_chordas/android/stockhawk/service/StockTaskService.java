@@ -12,6 +12,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.TaskParams;
+import com.sam_chordas.android.stockhawk.R;
 import com.sam_chordas.android.stockhawk.data.QuoteColumns;
 import com.sam_chordas.android.stockhawk.data.QuoteProvider;
 import com.sam_chordas.android.stockhawk.rest.Utils;
@@ -91,9 +92,7 @@ public class StockTaskService extends GcmTaskService {
                             .append("\",");
                     initQueryCursor.moveToNext();
                 }
-                Log.v(LOG_TAG, String.valueOf(mStoredSymbols));
                 mStoredSymbols.replace(mStoredSymbols.length() - 1, mStoredSymbols.length(), ")");
-                Log.v(LOG_TAG, "Corrected: " + String.valueOf(mStoredSymbols));
                 try {
                     urlStringBuilder.append(URLEncoder.encode(mStoredSymbols.toString(), "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
@@ -119,7 +118,6 @@ public class StockTaskService extends GcmTaskService {
         int result = GcmNetworkManager.RESULT_FAILURE;
 
         urlString = urlStringBuilder.toString();
-        Log.v(LOG_TAG, "Url String: " + urlString);
         try {
             getResponse = fetchData(urlString);
             if (getResponse == null) {
@@ -149,7 +147,7 @@ public class StockTaskService extends GcmTaskService {
 
 
             } catch (RemoteException | OperationApplicationException e) {
-                Log.e(LOG_TAG, "Error applying batch insert", e);
+                Log.e(LOG_TAG, getString(R.string.error_batch_insert), e);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Utils.setStatus(mContext, MyStocksActivity.STATUS_SERVER_INVALID);

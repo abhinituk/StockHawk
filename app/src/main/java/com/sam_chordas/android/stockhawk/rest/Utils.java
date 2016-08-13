@@ -47,7 +47,6 @@ public class Utils {
                         jsonObject = jsonObject.getJSONObject("results")
                                 .getJSONObject("quote");
                         if (jsonObject.getString("Bid").equals("null")) {
-                            Log.v(LOG_TAG, "This part executed");
                             return new ArrayList();
                         }
                         batchOperations.add(buildBatchOperation(jsonObject));
@@ -58,7 +57,6 @@ public class Utils {
                             for (int i = 0; i < resultsArray.length(); i++) {
                                 jsonObject = resultsArray.getJSONObject(i);
                                 if (jsonObject.getString("Bid").equals("null")) {
-                                    Log.v(LOG_TAG, "This part executed");
                                     return new ArrayList();
                                 }
                                 batchOperations.add(buildBatchOperation(jsonObject));
@@ -68,7 +66,7 @@ public class Utils {
                 }
                 setStatus(context, MyStocksActivity.STATUS_OK);
             } catch (JSONException e) {
-                Log.e(LOG_TAG, "String to JSON failed: " + e);
+                Log.e(LOG_TAG,e.toString());
                 setStatus(context, MyStocksActivity.STATUS_SERVER_INVALID);
             }
         return batchOperations;
@@ -101,7 +99,6 @@ public class Utils {
                 QuoteProvider.Quotes.CONTENT_URI);
         try {
             String change = jsonObject.getString("Change");
-            Log.v(LOG_TAG, "Change: " + change);
             builder.withValue(QuoteColumns.SYMBOL, jsonObject.getString("symbol"));
             builder.withValue(QuoteColumns.COMPANY_NAME, jsonObject.getString("Name"));
             builder.withValue(QuoteColumns.BIDPRICE, truncateBidPrice(jsonObject.getString("Bid")));

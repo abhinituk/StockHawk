@@ -14,6 +14,7 @@ import android.view.View;
  */
 public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
     private static final String LOG_TAG = CursorRecyclerViewAdapter.class.getSimpleName();
+    private static final String ID = "_id";
     private Cursor mCursor;
     private boolean dataIsValid;
     private int rowIdColumn;
@@ -23,7 +24,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
     public CursorRecyclerViewAdapter(Context context, Cursor cursor, View emptyView) {
         mCursor = cursor;
         dataIsValid = cursor != null;
-        rowIdColumn = dataIsValid ? mCursor.getColumnIndex("_id") : -1;
+        rowIdColumn = dataIsValid ? mCursor.getColumnIndex(ID) : -1;
         mDataSetObserver = new NotifyingDataSetObserver();
         if (dataIsValid) {
             mCursor.registerDataSetObserver(mDataSetObserver);
@@ -84,7 +85,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
             if (mDataSetObserver != null) {
                 mCursor.registerDataSetObserver(mDataSetObserver);
             }
-            rowIdColumn = newCursor.getColumnIndexOrThrow("_id");
+            rowIdColumn = newCursor.getColumnIndexOrThrow(ID);
             dataIsValid = true;
             notifyDataSetChanged();
             mEmptyView.setVisibility(newCursor.getCount() == 0 ? View.VISIBLE : View.GONE);
